@@ -14,12 +14,16 @@ class Dwarf(GameFigure):
     def add_gold(self, amount):
         self.__gold += amount
 
-    def catch_item(self, element):
-        if (element.is_visible() and self._calculate_distance(element) >= self._calculate_distance(self)):
+    def catch_item(self, element, elem_rect):
+        if (element.is_visible() and self.check_collision(elem_rect)):
             if (type(element).__name__ == "Gold"):
                 self.add_gold(element.get_amount())
             element.make_invisible()
+            print("collected")
 
+    def get_rect(self):
+        self.dwarf_rect = pygame.Rect(self._x, self._y, self._width, self._height)
+        return self.dwarf_rect
 
     # Movement
 
@@ -35,12 +39,12 @@ class Dwarf(GameFigure):
     def decrease_y(self):
         self._y -= 1
 
-    def move_dwarf(self, pressed, board):
-        if pressed[pygame.K_UP] and (self._y - 1) > 0:
+    def move_dwarf(self, pressed, right, left, up, down):
+        if pressed[pygame.K_UP] and not up:
             self.decrease_y()
-        if pressed[pygame.K_DOWN] and (self._y + 20) < board._height:
+        if pressed[pygame.K_DOWN] and not down:
             self.increase_y()
-        if pressed[pygame.K_RIGHT] and (self._x + 20) < board._width:
+        if pressed[pygame.K_RIGHT] and not right:
             self.increase_x()
-        if pressed[pygame.K_LEFT] and (self._x - 1) > 0:
+        if pressed[pygame.K_LEFT] and not left:
             self.decrease_x()

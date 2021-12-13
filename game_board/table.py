@@ -12,6 +12,30 @@ class Table(object):
         self._height = height
         self.screen = screen
 
+    def set_borders(self):
+        self.up_border = pygame.Rect(0, 0, self._width, 30)
+        self.down_border = pygame.Rect(0, self._height-30, self._width, 30)
+        self.left_border = pygame.Rect(0, 0, 30, self._height)
+        self.right_border = pygame.Rect(self._width-30, 0, 30, self._height)
+
+    def up_border_collision(self):
+        return self.__dwarf.get_rect().colliderect(self.up_border)
+
+    def down_border_collision(self):
+        return self.__dwarf.get_rect().colliderect(self.down_border)
+
+    def right_border_collision(self):
+        return self.__dwarf.get_rect().colliderect(self.right_border)
+
+    def left_border_collision(self):
+        return self.__dwarf.get_rect().colliderect(self.left_border)
+
+    def draw_borders(self, screen):
+        pygame.draw.rect(screen, (250, 0, 30), self.right_border)
+        pygame.draw.rect(screen, (250, 0, 30), self.left_border)
+        pygame.draw.rect(screen, (250, 0, 30), self.up_border)
+        pygame.draw.rect(screen, (250, 0, 30), self.down_border)
+
     def get_size(self):
         return self._width, self._height
 
@@ -27,10 +51,7 @@ class Table(object):
     def draw_dwarf(self):
         pygame.draw.rect(self.screen,
                          self.__dwarf.get_color(),
-                         (self.__dwarf.get_xy()[0],
-                          self.__dwarf.get_xy()[1],
-                          self.__dwarf.get_size()[0],
-                          self.__dwarf.get_size()[1])
+                         self.__dwarf.get_rect()
                          )
 
     def get_dwarf(self):
@@ -43,18 +64,19 @@ class Table(object):
         color = (208, 242, 15)
         self.gold_mountains = list()
         for i in range(3):
-            x = random.randint(10, self._width)
-            y = random.randint(10, self._height)
-            self.gold_mountains.append(Gold(10, 10, x, y, color, self, 100))
+            x = random.randint(30, self._width-30)
+            y = random.randint(30, self._height-30)
+            gold_i = Gold(10, 10, x, y, color, self, 100)
+            self.gold_mountains.append((gold_i, gold_i.get_item_rect()))
 
     def draw_gold(self, i):
         pygame.draw.rect(self.screen,
-                         self.gold_mountains[i].get_color(),
-                         (self.gold_mountains[i].get_xy()[0],
-                          self.gold_mountains[i].get_xy()[1],
-                          self.gold_mountains[i].get_size()[0],
-                          self.gold_mountains[i].get_size()[1])
+                         self.gold_mountains[i][0].get_color(),
+                         self.gold_mountains[i][1]
                          )
 
-    def get_gold_items(self):
-        return self.gold_mountains
+    def get_gold_items(self, i):
+        return self.gold_mountains[i][0]
+
+    def get_gold_items_rect(self, i):
+        return self.gold_mountains[i][1]

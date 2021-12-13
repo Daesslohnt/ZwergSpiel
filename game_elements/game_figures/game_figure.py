@@ -1,4 +1,4 @@
-import math
+import pygame
 
 from game_elements.element import Element
 
@@ -10,6 +10,7 @@ class GameFigure(Element):
         self.__item = None
         self.__is_alive = True
         self.__is_visible = True
+        self.fig_rect = self.create_rect()
 
     def get_hp(self):
         return self.__health
@@ -26,10 +27,13 @@ class GameFigure(Element):
     def set_item(self, item):
         self.__item = item
 
-    def catch_item(self, element):
-        if (element.is_visible() and self._calculate_distance(element) >= self._calculate_distance(self)):
-            self.item = element
-            element.set_invisible()
+    def create_rect(self):
+        return pygame.Rect(self._x, self._y, self._width, self._height)
 
-    def _calculate_distance(self, item):
-        return math.sqrt(item.get_xy()[0] ** 2 + item.get_xy()[1] ** 2)
+    def catch_item(self, element, elem_rect):
+        if (element.is_visible() and self.check_collision(elem_rect)):
+            element.make_invisible()
+            print("collected")
+
+    def check_collision(self, rect):
+        return self.fig_rect.colliderect(rect)

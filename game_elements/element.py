@@ -15,7 +15,7 @@ class Element(object):
         self._height = height
         self._x = x
         self._y = y
-        self.__color = color
+        self._color = color
         self._table = table
         if ((self._x + self._width // 2) >= self._table.get_size()[0]
         or (self._x - self._width // 2) < 0
@@ -29,5 +29,8 @@ class Element(object):
     def get_xy(self):
         return self._x, self._y
 
+    def get_params(self):
+        return self._x, self._y, self._width, self._height
+
     def get_color(self):
-        return self.__color
+        return self._color
