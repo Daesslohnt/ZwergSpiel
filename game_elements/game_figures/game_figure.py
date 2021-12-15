@@ -10,7 +10,6 @@ class GameFigure(Element):
         self.__item = None
         self.__is_alive = True
         self.__is_visible = True
-        self.fig_rect = self.create_rect()
 
     def get_hp(self):
         return self.__health
@@ -27,8 +26,19 @@ class GameFigure(Element):
     def set_item(self, item):
         self.__item = item
 
-    def create_rect(self):
-        return pygame.Rect(self._x, self._y, self._width, self._height)
+    # Movement
+
+    def increase_x(self):
+        self._x += 1
+
+    def decrease_x(self):
+        self._x -= 1
+
+    def increase_y(self):
+        self._y += 1
+
+    def decrease_y(self):
+        self._y -= 1
 
     def catch_item(self, element, elem_rect):
         if (element.is_visible() and self.check_collision(elem_rect)):

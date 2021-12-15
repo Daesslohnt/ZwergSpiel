@@ -23,6 +23,7 @@ class Interface:
     def create_all_elements(self):
         self.board.create_dwarf()
         self.board.create_gold()
+        self.board.create_kobolds()
 
     def game_action(self):
         while True:
@@ -32,12 +33,22 @@ class Interface:
             pressed = pygame.key.get_pressed()
             self.board.empty_board()
             self.board.draw_borders(self.screen)
+
+
+            # Dwarf
             self.board.get_dwarf().move_dwarf(pressed,
                                               self.board.right_border_collision(),
                                               self.board.left_border_collision(),
                                               self.board.up_border_collision(),
                                               self.board.down_border_collision())
             self.board.draw_dwarf()
+
+            # Kobolds
+            for i in range(3):
+                self.board.get_kobold(i)[0].move_kobold(self.board.get_dwarf())
+                self.board.draw_kobolds(i)
+
+            # Gold
             for i in range(3):
                 self.board.get_dwarf().catch_item(self.board.get_gold_items(i),
                                                   self.board.collision(self.board.get_dwarf().get_rect(),

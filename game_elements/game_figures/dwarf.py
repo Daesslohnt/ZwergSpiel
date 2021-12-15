@@ -25,20 +25,6 @@ class Dwarf(GameFigure):
         self.dwarf_rect = pygame.Rect(self._x, self._y, self._width, self._height)
         return self.dwarf_rect
 
-    # Movement
-
-    def increase_x(self):
-        self._x += 1
-
-    def decrease_x(self):
-        self._x -= 1
-
-    def increase_y(self):
-        self._y += 1
-
-    def decrease_y(self):
-        self._y -= 1
-
     def move_dwarf(self, pressed, right, left, up, down):
         if pressed[pygame.K_UP] and not up:
             self.decrease_y()

@@ -3,7 +3,7 @@ import random
 
 from game_elements.game_figures.dwarf import Dwarf
 from game_elements.items.gold import Gold
-#from game_elements.game_figures.
+from game_elements.game_figures.kobold import Kobold
 
 class Table(object):
 
@@ -57,9 +57,6 @@ class Table(object):
     def get_dwarf(self):
         return self.__dwarf
 
-    def create_kobold(self):
-        pass
-
     def create_gold(self):
         color = (208, 242, 15)
         self.gold_mountains = list()
@@ -80,6 +77,22 @@ class Table(object):
 
     def get_gold_items_rect(self, i):
         return self.gold_mountains[i][1]
+
+    def create_kobolds(self):
+        color = (39, 176, 26)
+        self.kobolds = list()
+        for i in range(3):
+            x = random.randint(40, self._width - 40)
+            y = random.randint(40, self._height - 40)
+            kobold_i = Kobold(20, 20, x, y, color, self, 10)
+            self.kobolds.append([kobold_i, kobold_i.get_rect()])
+
+    def draw_kobolds(self, i):
+        self.kobolds[i][1] = self.kobolds[i][0].get_rect()
+        pygame.draw.rect(self.screen, self.kobolds[i][0].get_color(), self.kobolds[i][1])
+
+    def get_kobold(self, i):
+        return self.kobolds[i]
 
     def collision(self, obj1, obj2):
         return obj1.colliderect(obj2)
