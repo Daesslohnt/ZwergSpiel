@@ -14,8 +14,8 @@ class Dwarf(GameFigure):
     def add_gold(self, amount):
         self.__gold += amount
 
-    def catch_item(self, element, elem_rect):
-        if (element.is_visible() and self.check_collision(elem_rect)):
+    def catch_item(self, element, collision):
+        if (element.is_visible() and collision):
             if (type(element).__name__ == "Gold"):
                 self.add_gold(element.get_amount())
             element.make_invisible()

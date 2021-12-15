@@ -80,3 +80,6 @@ class Table(object):
 
     def get_gold_items_rect(self, i):
         return self.gold_mountains[i][1]
+
+    def collision(self, obj1, obj2):
+        return obj1.colliderect(obj2)

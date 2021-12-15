@@ -39,7 +39,9 @@ class Interface:
                                               self.board.down_border_collision())
             self.board.draw_dwarf()
             for i in range(3):
-                self.board.get_dwarf().catch_item(self.board.get_gold_items(i), self.board.get_gold_items_rect(i))
+                self.board.get_dwarf().catch_item(self.board.get_gold_items(i),
+                                                  self.board.collision(self.board.get_dwarf().get_rect(),
+                                                                       self.board.get_gold_items_rect(i)))
                 if (self.board.get_gold_items(i).is_visible()):
                     self.board.draw_gold(i)
 
