@@ -26,3 +26,7 @@ class Kobold(GameFigure):
     def get_rect(self):
         self.kobold_rect = pygame.Rect(self._x, self._y, self._width, self._height)
         return self.kobold_rect
+
+    def catch_item(self, element, collision):
+        if (collision and type(element).__name__ == "Dwarf"):
+            return True

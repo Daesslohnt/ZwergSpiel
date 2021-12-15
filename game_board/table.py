@@ -1,5 +1,6 @@
 import pygame
 import random
+import time
 
 from game_elements.game_figures.dwarf import Dwarf
 from game_elements.items.gold import Gold
@@ -91,8 +92,25 @@ class Table(object):
         self.kobolds[i][1] = self.kobolds[i][0].get_rect()
         pygame.draw.rect(self.screen, self.kobolds[i][0].get_color(), self.kobolds[i][1])
 
+
+    #return list [Kobold, Rect]
     def get_kobold(self, i):
         return self.kobolds[i]
 
     def collision(self, obj1, obj2):
         return obj1.colliderect(obj2)
+
+    def text_objects(self, text, font):
+        textSurface = font.render(text, True, (250, 0, 0))
+        return textSurface, textSurface.get_rect()
+
+    def message_display(self, text, screen):
+        largeText = pygame.font.Font('freesansbold.ttf', 115)
+        TextSurf, TextRect = self.text_objects(text, largeText)
+        TextRect.center = ((self._width / 2), (self._height / 2))
+        screen.blit(TextSurf, TextRect)
+
+        pygame.display.update()
+
+        time.sleep(2)
+

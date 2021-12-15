@@ -3,6 +3,7 @@ import sys
 import time
 
 from game_board.table import Table
+from game_board.game_logic import GameLogic
 
 class Interface:
 
@@ -20,13 +21,16 @@ class Interface:
         self.board = Table(table_width, table_height, self.screen)
         self.board.set_borders()
 
+    def set_game_logic(self):
+        self.game_logic = GameLogic()
+
     def create_all_elements(self):
         self.board.create_dwarf()
         self.board.create_gold()
         self.board.create_kobolds()
 
     def game_action(self):
-        while True:
+        while not self.game_logic.get_is_win():
             for event in pygame.event.get():
                 if (event.type == pygame.QUIT): sys.exit()
 
@@ -46,22 +50,34 @@ class Interface:
             # Kobolds
             for i in range(3):
                 self.board.get_kobold(i)[0].move_kobold(self.board.get_dwarf())
+                flag = self.board.get_kobold(i)[0].catch_item(self.board.get_dwarf(),
+                                                       self.board.collision(self.board.get_kobold(i)[1],
+                                                                            self.board.get_dwarf().get_rect()))
                 self.board.draw_kobolds(i)
+                self.game_logic.logic(flag)
 
             # Gold
             for i in range(3):
                 self.board.get_dwarf().catch_item(self.board.get_gold_items(i),
-                                                  self.board.collision(self.board.get_dwarf().get_rect(),
-                                                                       self.board.get_gold_items_rect(i)))
+                                                  self.board.collision
+                                                  (self.board.get_dwarf().get_rect(),
+                                                    self.board.get_gold_items_rect(i)))
                 if (self.board.get_gold_items(i).is_visible()):
                     self.board.draw_gold(i)
 
+            # game logic
+            self.game_logic.catch_some_gold(self.board.get_dwarf().get_gold())
             time.sleep(0.004)
             pygame.display.update()
+
+        if (self.game_logic.get_is_win()):
+            self.board.empty_board()
+            self.board.message_display("Lose !!!", self.screen)
 
 if __name__ == '__main__':
     interface = Interface()
     interface.set_up_screen(600, 600)
     interface.set_board()
     interface.create_all_elements()
+    interface.set_game_logic()
     interface.game_action()

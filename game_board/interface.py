@@ -33,7 +33,7 @@ class Interface:
             self.board.draw_dwarf()
             for i in range(3):
                 self.board.get_dwarf().catch_item(self.board.get_gold_items()[i])
-                if (self.board.get_gold_items()[i].is_visible()):
+                if (self.board.get_gold_items(i)[i].is_visible()):
                     self.board.draw_gold(i)
 
             time.sleep(0.004)
