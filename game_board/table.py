@@ -5,6 +5,8 @@ import time
 from game_elements.game_figures.dwarf import Dwarf
 from game_elements.items.gold import Gold
 from game_elements.game_figures.kobold import Kobold
+from game_elements.items.exit import Exit
+
 
 class Table(object):
 
@@ -43,6 +45,17 @@ class Table(object):
     def empty_board(self):
         self.screen.fill((0, 0, 0))
 
+    def create_exit(self):
+        self.exit = Exit(40, 15, 280, 30, (40, 60, 237), self)
+
+    def draw_exit(self):
+        pygame.draw.rect(self.screen,
+                         self.exit.get_color(),
+                         self.exit.get_item_rect())
+
+    def get_exit(self):
+        return self.exit
+
     def create_dwarf(self):
         x = self._height // 2
         y = self._width // 2
@@ -58,14 +71,18 @@ class Table(object):
     def get_dwarf(self):
         return self.__dwarf
 
-    def create_gold(self):
+    def create_gold(self, count):
         color = (208, 242, 15)
+        self.gold_counter = count
         self.gold_mountains = list()
-        for i in range(3):
+        for i in range(count):
             x = random.randint(30, self._width-30)
             y = random.randint(30, self._height-30)
             gold_i = Gold(10, 10, x, y, color, self, 100)
             self.gold_mountains.append((gold_i, gold_i.get_item_rect()))
+
+    def get_gold_counter(self):
+        return self.gold_counter
 
     def draw_gold(self, i):
         pygame.draw.rect(self.screen,
@@ -79,14 +96,18 @@ class Table(object):
     def get_gold_items_rect(self, i):
         return self.gold_mountains[i][1]
 
-    def create_kobolds(self):
+    def create_kobolds(self, counter):
         color = (39, 176, 26)
+        self.kobold_counter = counter
         self.kobolds = list()
-        for i in range(3):
+        for i in range(counter):
             x = random.randint(40, self._width - 40)
             y = random.randint(40, self._height - 40)
             kobold_i = Kobold(20, 20, x, y, color, self, 10)
             self.kobolds.append([kobold_i, kobold_i.get_rect()])
+
+    def get_kobold_counter(self):
+        return self.kobold_counter
 
     def draw_kobolds(self, i):
         self.kobolds[i][1] = self.kobolds[i][0].get_rect()

@@ -14,12 +14,15 @@ class Dwarf(GameFigure):
     def add_gold(self, amount):
         self.__gold += amount
 
-    def catch_item(self, element, collision):
+    def catch_item(self, element, collision, game_logic):
         if (element.is_visible() and collision):
             if (type(element).__name__ == "Gold"):
                 self.add_gold(element.get_amount())
-            element.make_invisible()
-            print("collected")
+                element.make_invisible()
+                print("collected")
+            if (type(element).__name__ == "Exit"):
+                game_logic.set_to_win()
+                print("exit collision")
 
     def get_rect(self):
         self.dwarf_rect = pygame.Rect(self._x, self._y, self._width, self._height)

@@ -24,19 +24,21 @@ class Interface:
     def set_game_logic(self):
         self.game_logic = GameLogic()
 
-    def create_all_elements(self):
+    def create_all_elements(self, golds, kobolds):
         self.board.create_dwarf()
-        self.board.create_gold()
-        self.board.create_kobolds()
+        self.board.create_exit()
+        self.board.create_gold(golds)
+        self.board.create_kobolds(kobolds)
 
     def game_action(self):
-        while not self.game_logic.get_is_win():
+        while not self.game_logic.get_is_lose() and not self.game_logic.get_is_win():
             for event in pygame.event.get():
                 if (event.type == pygame.QUIT): sys.exit()
 
             pressed = pygame.key.get_pressed()
             self.board.empty_board()
             self.board.draw_borders(self.screen)
+            self.board.draw_exit()
 
 
             # Dwarf
@@ -45,23 +47,28 @@ class Interface:
                                               self.board.left_border_collision(),
                                               self.board.up_border_collision(),
                                               self.board.down_border_collision())
+            self.board.get_dwarf().catch_item(self.board.get_exit(),
+                                              self.board.collision(self.board.get_dwarf().get_rect(),
+                                                                   self.board.get_exit().get_item_rect()),
+                                                                    self.game_logic)
+
             self.board.draw_dwarf()
 
             # Kobolds
-            for i in range(3):
+            for i in range(self.board.get_kobold_counter()):
                 self.board.get_kobold(i)[0].move_kobold(self.board.get_dwarf())
-                flag = self.board.get_kobold(i)[0].catch_item(self.board.get_dwarf(),
+                self.board.get_kobold(i)[0].catch_item(self.board.get_dwarf(),
                                                        self.board.collision(self.board.get_kobold(i)[1],
-                                                                            self.board.get_dwarf().get_rect()))
+                                                                            self.board.get_dwarf().get_rect()),
+                                                       self.game_logic)
                 self.board.draw_kobolds(i)
-                self.game_logic.logic(flag)
 
             # Gold
-            for i in range(3):
+            for i in range(self.board.get_gold_counter()):
                 self.board.get_dwarf().catch_item(self.board.get_gold_items(i),
-                                                  self.board.collision
-                                                  (self.board.get_dwarf().get_rect(),
-                                                    self.board.get_gold_items_rect(i)))
+                                                  self.board.collision(self.board.get_dwarf().get_rect(),
+                                                                        self.board.get_gold_items_rect(i)),
+                                                                        self.game_logic)
                 if (self.board.get_gold_items(i).is_visible()):
                     self.board.draw_gold(i)
 
@@ -70,14 +77,19 @@ class Interface:
             time.sleep(0.004)
             pygame.display.update()
 
-        if (self.game_logic.get_is_win()):
+        if (self.game_logic.get_is_lose()):
             self.board.empty_board()
             self.board.message_display("Lose !!!", self.screen)
+        elif (self.game_logic.get_is_win()):
+            self.board.empty_board()
+            self.board.message_display("You Won!!!", self.screen)
+        else:
+            raise Exception
 
 if __name__ == '__main__':
     interface = Interface()
     interface.set_up_screen(600, 600)
     interface.set_board()
-    interface.create_all_elements()
+    interface.create_all_elements(10, 2)
     interface.set_game_logic()
     interface.game_action()

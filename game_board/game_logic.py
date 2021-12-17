@@ -1,17 +1,24 @@
 
 
 class GameLogic:
+    WIN = False
+    LOSE = False
 
     def __init__(self):
         self._gold_cached = 0
-        self._is_win = False
 
-    def logic(self, exit):
-        if (exit):
-            self._is_win = True
+
+    def set_to_win(self):
+        self.WIN = True
+
+    def set_to_lose(self):
+        self.LOSE = True
 
     def get_is_win(self):
-        return self._is_win
+        return self.WIN
+
+    def get_is_lose(self):
+        return self.LOSE
 
     """
     as parameter get all gold that the dwarf has
