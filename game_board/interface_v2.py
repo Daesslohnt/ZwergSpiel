@@ -4,6 +4,9 @@ import time
 
 from game_board.table import Table
 from game_board.game_logic import GameLogic
+from utils.json_parser import JsonParser
+
+config = JsonParser.parse()
 
 class Interface:
 
@@ -16,9 +19,7 @@ class Interface:
         self.screen = pygame.display.set_mode([length, width])
 
     def set_board(self):
-        table_width = 600
-        table_height = 600
-        self.board = Table(table_width, table_height, self.screen)
+        self.board = Table(self.length, self.width, self.screen)
         self.board.set_borders()
 
     def set_game_logic(self):
@@ -74,8 +75,9 @@ class Interface:
 
             # game logic
             self.game_logic.catch_some_gold(self.board.get_dwarf().get_gold())
-            time.sleep(0.004)
+            time.sleep(config["delay"])
             pygame.display.update()
+
 
         if (self.game_logic.get_is_lose()):
             self.board.empty_board()
@@ -88,8 +90,8 @@ class Interface:
 
 if __name__ == '__main__':
     interface = Interface()
-    interface.set_up_screen(600, 600)
+    interface.set_up_screen(config["screen_size"], config["screen_size"])
     interface.set_board()
-    interface.create_all_elements(10, 2)
+    interface.create_all_elements(config["count_of_gold"], config["count_of_kobolds"])
     interface.set_game_logic()
     interface.game_action()
