@@ -13,6 +13,12 @@ class Table(object):
     DWARF_IMG = pygame.transform.scale(DWARF_IMG, (20, 20))
     KOBOLD_IMG = pygame.image.load('sorce/kobold.jpg')
     KOBOLD_IMG = pygame.transform.scale(KOBOLD_IMG, (20, 20))
+    GOLD_IMG = pygame.image.load('sorce/gold.jpg')
+    GOLD_IMG = pygame.transform.scale(GOLD_IMG, (20, 20))
+    EXIT = pygame.image.load('sorce/exit.jpg')
+    EXIT = pygame.transform.scale(EXIT, (60, 30))
+    FLOOR = pygame.image.load('sorce/floortexture.jpg')
+    FLOOR = pygame.transform.scale(FLOOR, (600, 600))
 
     def __init__(self, width, height, screen):
         self._width = width
@@ -37,11 +43,11 @@ class Table(object):
     def left_border_collision(self):
         return self.__dwarf.get_rect().colliderect(self.left_border)
 
-    def draw_borders(self, screen):
-        pygame.draw.rect(screen, (250, 0, 30), self.right_border)
-        pygame.draw.rect(screen, (250, 0, 30), self.left_border)
-        pygame.draw.rect(screen, (250, 0, 30), self.up_border)
-        pygame.draw.rect(screen, (250, 0, 30), self.down_border)
+    def draw_borders(self):
+        pygame.draw.rect(self.screen, (250, 0, 30), self.right_border)
+        pygame.draw.rect(self.screen, (250, 0, 30), self.left_border)
+        pygame.draw.rect(self.screen, (250, 0, 30), self.up_border)
+        pygame.draw.rect(self.screen, (250, 0, 30), self.down_border)
 
     def get_size(self):
         return self._width, self._height
@@ -49,13 +55,17 @@ class Table(object):
     def empty_board(self):
         self.screen.fill((0, 0, 0))
 
+    def draw_dungeon_floor(self):
+        self.screen.blit(self.FLOOR, (0, 0))
+
     def create_exit(self):
-        self.exit = Exit(40, 15, 280, 30, (40, 60, 237), self)
+        self.exit = Exit(60, 25, 280, 30, (40, 60, 237), self)
 
     def draw_exit(self):
         pygame.draw.rect(self.screen,
                          self.exit.get_color(),
                          self.exit.get_item_rect())
+        self.screen.blit(self.EXIT, self.exit.get_xy())
 
     def get_exit(self):
         return self.exit
@@ -66,12 +76,12 @@ class Table(object):
         color = (227, 99, 25)
         self.__dwarf = Dwarf(20, 20, x, y, color, self, 5)
 
-    def draw_dwarf(self, screen):
+    def draw_dwarf(self):
         pygame.draw.rect(self.screen,
                          self.__dwarf.get_color(),
                          self.__dwarf.get_rect()
                          )
-        screen.blit(self.DWARF_IMG, self.__dwarf.get_xy())
+        self.screen.blit(self.DWARF_IMG, self.__dwarf.get_xy())
 
     def get_dwarf(self):
         return self.__dwarf
@@ -94,6 +104,7 @@ class Table(object):
                          self.gold_mountains[i][0].get_color(),
                          self.gold_mountains[i][1]
                          )
+        self.screen.blit(self.GOLD_IMG, self.gold_mountains[i][0].get_xy())
 
     def get_gold_items(self, i):
         return self.gold_mountains[i][0]
@@ -114,10 +125,10 @@ class Table(object):
     def get_kobold_counter(self):
         return self.kobold_counter
 
-    def draw_kobolds(self, i, screen):
+    def draw_kobolds(self, i):
         self.kobolds[i][1] = self.kobolds[i][0].get_rect()
         pygame.draw.rect(self.screen, self.kobolds[i][0].get_color(), self.kobolds[i][1])
-        screen.blit(self.KOBOLD_IMG, self.kobolds[i][0].get_xy())
+        self.screen.blit(self.KOBOLD_IMG, self.kobolds[i][0].get_xy())
 
 
     #return list [Kobold, Rect]
@@ -131,11 +142,11 @@ class Table(object):
         textSurface = font.render(text, True, (250, 0, 0))
         return textSurface, textSurface.get_rect()
 
-    def message_display(self, text, screen):
+    def message_display(self, text):
         largeText = pygame.font.Font('freesansbold.ttf', 115)
         TextSurf, TextRect = self.text_objects(text, largeText)
         TextRect.center = ((self._width / 2), (self._height / 2))
-        screen.blit(TextSurf, TextRect)
+        self.screen.blit(TextSurf, TextRect)
 
         pygame.display.update()
 

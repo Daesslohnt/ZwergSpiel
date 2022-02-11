@@ -45,14 +45,16 @@ class Interface:
             #help to manipulate figure with your keys
             pressed = pygame.key.get_pressed()
 
+            # draw the dungeon floor
+            self.board.draw_dungeon_floor()
+
             #draw the board borders
-            self.board.empty_board()
-            self.board.draw_borders(self.screen)
+            self.board.draw_borders()
+
+            # Exit
             self.board.draw_exit()
 
-
             # Dwarf
-
             self.board.get_dwarf().move_dwarf(pressed,
                                               self.board.right_border_collision(),
                                               self.board.left_border_collision(),
@@ -62,8 +64,7 @@ class Interface:
                                               self.board.collision(self.board.get_dwarf().get_rect(),
                                                                    self.board.get_exit().get_item_rect()),
                                                                     self.game_logic)
-
-            self.board.draw_dwarf(self.screen)
+            self.board.draw_dwarf()
 
             # Kobolds
             for i in range(self.board.get_kobold_counter()):
@@ -72,7 +73,7 @@ class Interface:
                                                        self.board.collision(self.board.get_kobold(i)[1],
                                                                             self.board.get_dwarf().get_rect()),
                                                        self.game_logic)
-                self.board.draw_kobolds(i, self.screen)
+                self.board.draw_kobolds(i)
 
             # Gold
             for i in range(self.board.get_gold_counter()):
@@ -92,9 +93,9 @@ class Interface:
         #after the game ends
         if (self.game_logic.get_is_lose()):
             self.board.empty_board()
-            self.board.message_display("Lose !!!", self.screen)
+            self.board.message_display("Lose !!!")
         elif (self.game_logic.get_is_win()):
             self.board.empty_board()
-            self.board.message_display("You Won!!!", self.screen)
+            self.board.message_display("You Won!!!")
         else:
             raise Exception
