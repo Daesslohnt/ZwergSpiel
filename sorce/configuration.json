@@ -3,5 +3,5 @@
   "screen_size": 600,
   "count_of_gold": 10,
   "count_of_kobolds": 2,
-  "FPS": 200
+  "FPS": 10000
 }

@@ -9,6 +9,10 @@ from game_elements.items.exit import Exit
 
 
 class Table(object):
+    DWARF_IMG = pygame.image.load('sorce/zwerg.jpg')
+    DWARF_IMG = pygame.transform.scale(DWARF_IMG, (20, 20))
+    KOBOLD_IMG = pygame.image.load('sorce/kobold.jpg')
+    KOBOLD_IMG = pygame.transform.scale(KOBOLD_IMG, (20, 20))
 
     def __init__(self, width, height, screen):
         self._width = width
@@ -62,11 +66,12 @@ class Table(object):
         color = (227, 99, 25)
         self.__dwarf = Dwarf(20, 20, x, y, color, self, 5)
 
-    def draw_dwarf(self):
+    def draw_dwarf(self, screen):
         pygame.draw.rect(self.screen,
                          self.__dwarf.get_color(),
                          self.__dwarf.get_rect()
                          )
+        screen.blit(self.DWARF_IMG, self.__dwarf.get_xy())
 
     def get_dwarf(self):
         return self.__dwarf
@@ -109,9 +114,10 @@ class Table(object):
     def get_kobold_counter(self):
         return self.kobold_counter
 
-    def draw_kobolds(self, i):
+    def draw_kobolds(self, i, screen):
         self.kobolds[i][1] = self.kobolds[i][0].get_rect()
         pygame.draw.rect(self.screen, self.kobolds[i][0].get_color(), self.kobolds[i][1])
+        screen.blit(self.KOBOLD_IMG, self.kobolds[i][0].get_xy())
 
 
     #return list [Kobold, Rect]

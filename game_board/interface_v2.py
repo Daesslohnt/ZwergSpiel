@@ -36,6 +36,7 @@ class Interface:
         while not self.game_logic.get_is_lose() and not self.game_logic.get_is_win():
             #time delay
             self._clock.tick(config["FPS"])
+            time.sleep(config["delay"])
 
             #its how to exit the game before you lose
             for event in pygame.event.get():
@@ -51,6 +52,7 @@ class Interface:
 
 
             # Dwarf
+
             self.board.get_dwarf().move_dwarf(pressed,
                                               self.board.right_border_collision(),
                                               self.board.left_border_collision(),
@@ -61,7 +63,7 @@ class Interface:
                                                                    self.board.get_exit().get_item_rect()),
                                                                     self.game_logic)
 
-            self.board.draw_dwarf()
+            self.board.draw_dwarf(self.screen)
 
             # Kobolds
             for i in range(self.board.get_kobold_counter()):
@@ -70,7 +72,7 @@ class Interface:
                                                        self.board.collision(self.board.get_kobold(i)[1],
                                                                             self.board.get_dwarf().get_rect()),
                                                        self.game_logic)
-                self.board.draw_kobolds(i)
+                self.board.draw_kobolds(i, self.screen)
 
             # Gold
             for i in range(self.board.get_gold_counter()):
