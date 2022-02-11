@@ -12,6 +12,7 @@ class Interface:
 
     def __init__(self):
         pygame.init()
+        self._clock = pygame.time.Clock()
 
     def set_up_screen(self, length, width):
         self.length = length
@@ -33,10 +34,17 @@ class Interface:
 
     def game_action(self):
         while not self.game_logic.get_is_lose() and not self.game_logic.get_is_win():
+            #time delay
+            self._clock.tick(config["FPS"])
+
+            #its how to exit the game before you lose
             for event in pygame.event.get():
                 if (event.type == pygame.QUIT): sys.exit()
 
+            #help to manipulate figure with your keys
             pressed = pygame.key.get_pressed()
+
+            #draw the board borders
             self.board.empty_board()
             self.board.draw_borders(self.screen)
             self.board.draw_exit()
@@ -75,10 +83,11 @@ class Interface:
 
             # game logic
             self.game_logic.catch_some_gold(self.board.get_dwarf().get_gold())
-            time.sleep(config["delay"])
+
+            #update the screen
             pygame.display.update()
 
-
+        #after the game ends
         if (self.game_logic.get_is_lose()):
             self.board.empty_board()
             self.board.message_display("Lose !!!", self.screen)
@@ -87,11 +96,3 @@ class Interface:
             self.board.message_display("You Won!!!", self.screen)
         else:
             raise Exception
-
-if __name__ == '__main__':
-    interface = Interface()
-    interface.set_up_screen(config["screen_size"], config["screen_size"])
-    interface.set_board()
-    interface.create_all_elements(config["count_of_gold"], config["count_of_kobolds"])
-    interface.set_game_logic()
-    interface.game_action()

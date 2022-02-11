@@ -27,7 +27,7 @@ class Element(object):
         return self._width, self._height
 
     def get_xy(self):
-        return self._x, self._y
+        return (self._x, self._y)
 
     def get_params(self):
         return self._x, self._y, self._width, self._height

@@ -19,6 +19,7 @@ class Dwarf(GameFigure):
             if (type(element).__name__ == "Gold"):
                 self.add_gold(element.get_amount())
                 element.make_invisible()
+                self.add_gold(100)
                 print("collected")
             if (type(element).__name__ == "Exit"):
                 game_logic.set_to_win()
