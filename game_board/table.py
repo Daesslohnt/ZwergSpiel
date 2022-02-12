@@ -6,13 +6,20 @@ from game_elements.game_figures.dwarf import Dwarf
 from game_elements.items.gold import Gold
 from game_elements.game_figures.kobold import Kobold
 from game_elements.items.exit import Exit
+from utils.json_parser import JsonParser
+
+config = JsonParser.parse()
 
 
 class Table(object):
-    DWARF_IMG = pygame.transform.scale(pygame.image.load('sorce/zwerg.jpg'), (20, 20))
-    KOBOLD_IMG = pygame.transform.scale(pygame.image.load('sorce/kobold.jpg'), (20, 20))
-    GOLD_IMG = pygame.transform.scale(pygame.image.load('sorce/gold.jpg'), (20, 20))
-    EXIT = pygame.transform.scale(pygame.image.load('sorce/exit.jpg'), (60, 30))
+    DWARF_IMG = pygame.transform.scale(pygame.image.load('sorce/zwerg.jpg'),
+                                  (config['dwarf_size']['width'], config['dwarf_size']['height']))
+    KOBOLD_IMG = pygame.transform.scale(pygame.image.load('sorce/kobold.jpg'),
+                                  (config['kobold_size']['width'], config['kobold_size']['height']))
+    GOLD_IMG = pygame.transform.scale(pygame.image.load('sorce/gold.jpg'),
+                                  (config['gold_size']['width'], config['gold_size']['height']))
+    EXIT = pygame.transform.scale(pygame.image.load('sorce/exit.jpg'),
+                                  (config['exit_size']['width'], config['exit_size']['height']))
     FLOOR = pygame.transform.scale(pygame.image.load('sorce/floortexture.jpg'), (600, 600))
     UP_DOWN_BORDER = pygame.transform.scale(pygame.image.load('sorce/border_stone.jpg'), (600, 30))
     LEFT_RIGHT_BORDER = pygame.transform.scale(pygame.image.load('sorce/border_stone.jpg'), (30, 600))
@@ -60,7 +67,7 @@ class Table(object):
         self.screen.blit(self.FLOOR, (0, 0))
 
     def create_exit(self):
-        self.exit = Exit(60, 25, 280, 30, (40, 60, 237), self)
+        self.exit = Exit(config['exit_size']['width'], config['exit_size']['height'], 280, 30, (40, 60, 237), self)
 
     def draw_exit(self):
         # pygame.draw.rect(self.screen,
@@ -75,7 +82,7 @@ class Table(object):
         x = self._height // 2
         y = self._width // 2
         color = (227, 99, 25)
-        self.__dwarf = Dwarf(20, 20, x, y, color, self, 5)
+        self.__dwarf = Dwarf(config['dwarf_size']['width'], config['dwarf_size']['height'], x, y, color, self, 5)
 
     def draw_dwarf(self):
         # pygame.draw.rect(self.screen,
@@ -94,7 +101,7 @@ class Table(object):
         for i in range(count):
             x = random.randint(30, self._width-30)
             y = random.randint(30, self._height-30)
-            gold_i = Gold(10, 10, x, y, color, self, 100)
+            gold_i = Gold(config['gold_size']['width'], config['gold_size']['height'], x, y, color, self, 100)
             self.gold_mountains.append((gold_i, gold_i.get_item_rect()))
 
     def get_gold_counter(self):
@@ -120,7 +127,7 @@ class Table(object):
         for i in range(counter):
             x = random.randint(40, self._width - 40)
             y = random.randint(40, self._height - 40)
-            kobold_i = Kobold(20, 20, x, y, color, self, 10)
+            kobold_i = Kobold(config['kobold_size']['width'], config['kobold_size']['height'], x, y, color, self, 10)
             self.kobolds.append([kobold_i, kobold_i.get_rect()])
 
     def get_kobold_counter(self):
