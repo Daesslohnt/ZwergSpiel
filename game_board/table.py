@@ -9,16 +9,13 @@ from game_elements.items.exit import Exit
 
 
 class Table(object):
-    DWARF_IMG = pygame.image.load('sorce/zwerg.jpg')
-    DWARF_IMG = pygame.transform.scale(DWARF_IMG, (20, 20))
-    KOBOLD_IMG = pygame.image.load('sorce/kobold.jpg')
-    KOBOLD_IMG = pygame.transform.scale(KOBOLD_IMG, (20, 20))
-    GOLD_IMG = pygame.image.load('sorce/gold.jpg')
-    GOLD_IMG = pygame.transform.scale(GOLD_IMG, (20, 20))
-    EXIT = pygame.image.load('sorce/exit.jpg')
-    EXIT = pygame.transform.scale(EXIT, (60, 30))
-    FLOOR = pygame.image.load('sorce/floortexture.jpg')
-    FLOOR = pygame.transform.scale(FLOOR, (600, 600))
+    DWARF_IMG = pygame.transform.scale(pygame.image.load('sorce/zwerg.jpg'), (20, 20))
+    KOBOLD_IMG = pygame.transform.scale(pygame.image.load('sorce/kobold.jpg'), (20, 20))
+    GOLD_IMG = pygame.transform.scale(pygame.image.load('sorce/gold.jpg'), (20, 20))
+    EXIT = pygame.transform.scale(pygame.image.load('sorce/exit.jpg'), (60, 30))
+    FLOOR = pygame.transform.scale(pygame.image.load('sorce/floortexture.jpg'), (600, 600))
+    UP_DOWN_BORDER = pygame.transform.scale(pygame.image.load('sorce/border_stone.jpg'), (600, 30))
+    LEFT_RIGHT_BORDER = pygame.transform.scale(pygame.image.load('sorce/border_stone.jpg'), (30, 600))
 
     def __init__(self, width, height, screen):
         self._width = width
@@ -44,10 +41,14 @@ class Table(object):
         return self.__dwarf.get_rect().colliderect(self.left_border)
 
     def draw_borders(self):
-        pygame.draw.rect(self.screen, (250, 0, 30), self.right_border)
-        pygame.draw.rect(self.screen, (250, 0, 30), self.left_border)
-        pygame.draw.rect(self.screen, (250, 0, 30), self.up_border)
-        pygame.draw.rect(self.screen, (250, 0, 30), self.down_border)
+        #pygame.draw.rect(self.screen, (250, 0, 30), self.right_border)
+        self.screen.blit(self.LEFT_RIGHT_BORDER, (self._width-30, 0))
+        #pygame.draw.rect(self.screen, (250, 0, 30), self.left_border)
+        self.screen.blit(self.LEFT_RIGHT_BORDER, (0, 0))
+        #pygame.draw.rect(self.screen, (250, 0, 30), self.up_border)
+        self.screen.blit(self.UP_DOWN_BORDER, (0, 0))
+        #pygame.draw.rect(self.screen, (250, 0, 30), self.down_border)
+        self.screen.blit(self.UP_DOWN_BORDER, (0, self._height-30))
 
     def get_size(self):
         return self._width, self._height
@@ -62,9 +63,9 @@ class Table(object):
         self.exit = Exit(60, 25, 280, 30, (40, 60, 237), self)
 
     def draw_exit(self):
-        pygame.draw.rect(self.screen,
-                         self.exit.get_color(),
-                         self.exit.get_item_rect())
+        # pygame.draw.rect(self.screen,
+        #                  self.exit.get_color(),
+        #                  self.exit.get_item_rect())
         self.screen.blit(self.EXIT, self.exit.get_xy())
 
     def get_exit(self):
@@ -77,10 +78,10 @@ class Table(object):
         self.__dwarf = Dwarf(20, 20, x, y, color, self, 5)
 
     def draw_dwarf(self):
-        pygame.draw.rect(self.screen,
-                         self.__dwarf.get_color(),
-                         self.__dwarf.get_rect()
-                         )
+        # pygame.draw.rect(self.screen,
+        #                  self.__dwarf.get_color(),
+        #                  self.__dwarf.get_rect()
+        #                  )
         self.screen.blit(self.DWARF_IMG, self.__dwarf.get_xy())
 
     def get_dwarf(self):
@@ -100,10 +101,10 @@ class Table(object):
         return self.gold_counter
 
     def draw_gold(self, i):
-        pygame.draw.rect(self.screen,
-                         self.gold_mountains[i][0].get_color(),
-                         self.gold_mountains[i][1]
-                         )
+        # pygame.draw.rect(self.screen,
+        #                  self.gold_mountains[i][0].get_color(),
+        #                  self.gold_mountains[i][1]
+        #                  )
         self.screen.blit(self.GOLD_IMG, self.gold_mountains[i][0].get_xy())
 
     def get_gold_items(self, i):
@@ -127,7 +128,7 @@ class Table(object):
 
     def draw_kobolds(self, i):
         self.kobolds[i][1] = self.kobolds[i][0].get_rect()
-        pygame.draw.rect(self.screen, self.kobolds[i][0].get_color(), self.kobolds[i][1])
+        #pygame.draw.rect(self.screen, self.kobolds[i][0].get_color(), self.kobolds[i][1])
         self.screen.blit(self.KOBOLD_IMG, self.kobolds[i][0].get_xy())
 
 
