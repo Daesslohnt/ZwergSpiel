@@ -6,7 +6,7 @@ from game_board.table import Table
 from game_board.game_logic import GameLogic
 from utils.json_parser import JsonParser
 
-config = JsonParser.parse()
+config = JsonParser.parse_configuration()
 
 class Interface:
 

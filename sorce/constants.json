@@ -1,0 +1,18 @@
+{
+  "dwarf_size": {
+    "width": 25,
+    "height": 25
+  },
+  "kobold_size": {
+    "width": 25,
+    "height": 25
+  },
+  "gold_size": {
+    "width": 15,
+    "height": 15
+  },
+  "exit_size": {
+    "width": 60,
+    "height": 25
+  }
+}

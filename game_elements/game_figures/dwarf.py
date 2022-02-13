@@ -15,6 +15,15 @@ class Dwarf(GameFigure):
         self.__gold += amount
 
     def catch_item(self, element, collision, game_logic):
+        """
+        increment collected gold and make it invisible
+        or set game to win if dwarf collide exit
+
+        :param element: game element that dwarf collides
+        :param collision: boolean check that item and dwarf are collided
+        :param game_logic: obj to set it win if possible
+        :return: None
+        """
         if (element.is_visible() and collision):
             if (type(element).__name__ == "Gold"):
                 self.add_gold(element.get_amount())

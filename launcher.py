@@ -1,7 +1,7 @@
 from utils.json_parser import JsonParser
 from game_board.interface_v2 import Interface
 
-config = JsonParser.parse()
+config = JsonParser.parse_configuration()
 
 
 if __name__ == '__main__':
