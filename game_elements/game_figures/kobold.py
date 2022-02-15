@@ -10,17 +10,20 @@ class Kobold(GameFigure):
         super(Kobold, self).__init__(width, height, x, y, color, table, health)
         self._item = Axe(10, 10, 300, 300, (1, 0,0), table)
 
-    def move_kobold(self, dwarf):
+    def move_kobold(self, dwarf, pathfinding):
         direction_v = random.randint(0, 1) == 0
+        movement_coordinates_xy = dwarf.get_xy()
+        movement_coordinates_xy = pathfinding.find_next_movement(self.get_xy(),dwarf.get_xy())
         if (direction_v):
-            if (dwarf.get_xy()[1] > self._y):
+            if (movement_coordinates_xy[1] > self._y):
                 self.increase_y()
-            else:
+            elif (movement_coordinates_xy[1] < self._y):
                 self.decrease_y()
         else:
-            if (dwarf.get_xy()[0] < self._x):
+
+            if (movement_coordinates_xy[0] < self._x):
                 self.decrease_x()
-            else:
+            elif (movement_coordinates_xy[0] > self._x):
                 self.increase_x()
 
     def get_rect(self):

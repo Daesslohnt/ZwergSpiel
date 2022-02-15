@@ -1,11 +1,13 @@
-import pygame
 import random
 import time
 
+import pygame
+
 from game_elements.game_figures.dwarf import Dwarf
-from game_elements.items.gold import Gold
 from game_elements.game_figures.kobold import Kobold
 from game_elements.items.exit import Exit
+from game_elements.items.gold import Gold
+from game_board.pathfinding.pathfinding import Pathfinding
 
 
 class Table(object):
@@ -17,33 +19,76 @@ class Table(object):
 
     def set_borders(self):
         self.up_border = pygame.Rect(0, 0, self._width, 30)
-        self.down_border = pygame.Rect(0, self._height-30, self._width, 30)
+        self.down_border = pygame.Rect(0, self._height - 30, self._width, 30)
         self.left_border = pygame.Rect(0, 0, 30, self._height)
-        self.right_border = pygame.Rect(self._width-30, 0, 30, self._height)
+        self.right_border = pygame.Rect(self._width - 30, 0, 30, self._height)
+
+        self.obstacles = [self.up_border, self.down_border, self.left_border, self.right_border]
+
+        #debug-obstacles
+        self.obstacles.append(pygame.Rect(90, 110, 240, 60))
+        self.obstacles.append(pygame.Rect(330, 110, 40, 400))
 
     def up_border_collision(self):
-        return self.__dwarf.get_rect().colliderect(self.up_border)
+        hitbox_point_1 = self.__dwarf.get_xy()[0] + 1, self.__dwarf.get_xy()[1]
+        hitbox_point_2 = self.__dwarf.get_xy()[0] + self.__dwarf.get_size()[0] - 1, self.__dwarf.get_xy()[1]
+        for obstacle in self.obstacles:
+            if pygame.Rect.clipline(obstacle, hitbox_point_1, hitbox_point_2):
+                return True
+        return False
 
     def down_border_collision(self):
-        return self.__dwarf.get_rect().colliderect(self.down_border)
+        hitbox_point_1 = self.__dwarf.get_xy()[0] + 1, self.__dwarf.get_xy()[1] + self.__dwarf.get_size()[1]
+        hitbox_point_2 = self.__dwarf.get_xy()[0] + self.__dwarf.get_size()[0] - 1, self.__dwarf.get_xy()[1] + \
+                         self.__dwarf.get_size()[1]
+        for obstacle in self.obstacles:
+            if pygame.Rect.clipline(obstacle, hitbox_point_1, hitbox_point_2):
+                return True
+        return False
 
     def right_border_collision(self):
-        return self.__dwarf.get_rect().colliderect(self.right_border)
+        hitbox_point_1 = self.__dwarf.get_xy()[0] + self.__dwarf.get_size()[0], self.__dwarf.get_xy()[1] + 1
+        hitbox_point_2 = self.__dwarf.get_xy()[0] + self.__dwarf.get_size()[0], self.__dwarf.get_xy()[1] + \
+                         self.__dwarf.get_size()[1] - 1
+        for obstacle in self.obstacles:
+            if pygame.Rect.clipline(obstacle, hitbox_point_1, hitbox_point_2):
+                return True
+        return False
 
     def left_border_collision(self):
-        return self.__dwarf.get_rect().colliderect(self.left_border)
+        hitbox_point_1 = self.__dwarf.get_xy()[0], self.__dwarf.get_xy()[1] + 1
+        hitbox_point_2 = self.__dwarf.get_xy()[0], self.__dwarf.get_xy()[1] + self.__dwarf.get_size()[1] - 1
+        for obstacle in self.obstacles:
+            if pygame.Rect.clipline(obstacle, hitbox_point_1, hitbox_point_2):
+                return True
+        return False
 
-    def draw_borders(self, screen):
-        pygame.draw.rect(screen, (250, 0, 30), self.right_border)
-        pygame.draw.rect(screen, (250, 0, 30), self.left_border)
-        pygame.draw.rect(screen, (250, 0, 30), self.up_border)
-        pygame.draw.rect(screen, (250, 0, 30), self.down_border)
+    def draw_obstacles(self, screen):
+        for rect in self.obstacles:
+            pygame.draw.rect(screen, (250, 0, 30), rect)
 
     def get_size(self):
         return self._width, self._height
 
     def empty_board(self):
         self.screen.fill((0, 0, 0))
+
+    def create_pathfinding(self):
+        self._pathfinding = Pathfinding(self._width, self._height, self.left_border.width, self.up_border.height,
+                                        20, 20, self.obstacles)
+
+    def draw_pathfinding(self):
+        nodes = self._pathfinding.get_mesh().get_nodes()
+        edges = self._pathfinding.get_mesh().get_edges()
+        for node in nodes:
+            pygame.draw.rect(self.screen, (255, 255, 255), node.get_rect())
+        for edge in edges:
+            pygame.draw.line(self.screen, (255, 160, 77),
+                             edge.get_nodes()[0].get_xy(),
+                             edge.get_nodes()[1].get_xy())
+
+    def get_pathfinding(self):
+        return self._pathfinding
 
     def create_exit(self):
         self.exit = Exit(40, 15, 280, 30, (40, 60, 237), self)
@@ -76,8 +121,8 @@ class Table(object):
         self.gold_counter = count
         self.gold_mountains = list()
         for i in range(count):
-            x = random.randint(30, self._width-30)
-            y = random.randint(30, self._height-30)
+            x = random.randint(30, self._width - 30)
+            y = random.randint(30, self._height - 30)
             gold_i = Gold(10, 10, x, y, color, self, 100)
             self.gold_mountains.append((gold_i, gold_i.get_item_rect()))
 
@@ -113,8 +158,7 @@ class Table(object):
         self.kobolds[i][1] = self.kobolds[i][0].get_rect()
         pygame.draw.rect(self.screen, self.kobolds[i][0].get_color(), self.kobolds[i][1])
 
-
-    #return list [Kobold, Rect]
+    # return list [Kobold, Rect]
     def get_kobold(self, i):
         return self.kobolds[i]
 
@@ -134,4 +178,3 @@ class Table(object):
         pygame.display.update()
 
         time.sleep(2)
-
