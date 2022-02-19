@@ -1,9 +1,11 @@
 import pygame
+import logging
 
 from game_elements.game_figures.game_figure import GameFigure
 from utils.json_parser import JsonParser
 
 config = JsonParser.parse_constatns()
+logging.basicConfig(filename='sorce/history.log', level=logging.INFO)
 
 class Dwarf(GameFigure):
     DWARF_IMG = pygame.transform.scale(pygame.image.load('sorce/zwerg.jpg'),
@@ -32,11 +34,12 @@ class Dwarf(GameFigure):
             if (type(element).__name__ == "Gold"):
                 self.add_gold(element.get_amount())
                 element.make_invisible()
-                self.add_gold(100)
-                print("collected")
+                self.add_gold(element.get_amount())
+                message = 'collected {}'.format(element.get_amount)
+                logging.info(message)
             if (type(element).__name__ == "Exit"):
                 game_logic.set_to_win()
-                print("exit collision")
+                logging.info('exit')
 
     def get_dwarf_rect(self):
         return self.get_game_figure_rect()

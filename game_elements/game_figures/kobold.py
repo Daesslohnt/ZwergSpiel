@@ -1,5 +1,6 @@
 import random
 import pygame
+import logging
 
 from game_elements.game_figures.game_figure import GameFigure
 from game_elements.items.axe import Axe
@@ -33,5 +34,5 @@ class Kobold(GameFigure):
 
     def catch_item(self, element, game_logic):
         if (type(element).__name__ == "Dwarf" and self.check_collision(element.get_rectangle())):
-            print("dwarf is cached", self.get_xy())
             game_logic.set_to_lose()
+            logging.info('dwarf is catched')

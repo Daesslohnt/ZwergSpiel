@@ -131,7 +131,8 @@ class Table(object):
         for i in range(count):
             x = random.randint(30, self._width-30)
             y = random.randint(30, self._height-30)
-            gold_i = Gold(const['gold_size']['width'], const['gold_size']['height'], x, y, color, 100)
+            gold_amount = random.randint(1, 100)
+            gold_i = Gold(const['gold_size']['width'], const['gold_size']['height'], x, y, color, gold_amount)
             self.gold_mountains.append(gold_i)
 
     def get_gold_counter(self):
