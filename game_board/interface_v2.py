@@ -60,27 +60,20 @@ class Interface:
                                               self.board.left_border_collision(),
                                               self.board.up_border_collision(),
                                               self.board.down_border_collision())
-            self.board.get_dwarf().catch_item(self.board.get_exit(),
-                                              self.board.collision(self.board.get_dwarf().get_rect(),
-                                                                   self.board.get_exit().get_item_rect()),
-                                                                    self.game_logic)
+            self.board.get_dwarf().catch_item(self.board.get_exit(), self.game_logic)
+            self.board.get_dwarf().update_rect_xy()
             self.board.draw_dwarf()
 
             # Kobolds
             for i in range(self.board.get_kobold_counter()):
-                self.board.get_kobold(i)[0].move_kobold(self.board.get_dwarf())
-                self.board.get_kobold(i)[0].catch_item(self.board.get_dwarf(),
-                                                       self.board.collision(self.board.get_kobold(i)[1],
-                                                                            self.board.get_dwarf().get_rect()),
-                                                       self.game_logic)
+                self.board.get_kobold_by_index(i).move_kobold(self.board.get_dwarf())
+                self.board.get_kobold_by_index(i).catch_item(self.board.get_dwarf(), self.game_logic)
+                self.board.get_kobold_by_index(i).update_rect_xy()
                 self.board.draw_kobolds(i)
 
             # Gold
             for i in range(self.board.get_gold_counter()):
-                self.board.get_dwarf().catch_item(self.board.get_gold_items(i),
-                                                  self.board.collision(self.board.get_dwarf().get_rect(),
-                                                                        self.board.get_gold_items_rect(i)),
-                                                                        self.game_logic)
+                self.board.get_dwarf().catch_item(self.board.get_gold_items(i), self.game_logic)
                 if (self.board.get_gold_items(i).is_visible()):
                     self.board.draw_gold(i)
 

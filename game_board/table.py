@@ -6,23 +6,17 @@ from game_elements.game_figures.dwarf import Dwarf
 from game_elements.items.gold import Gold
 from game_elements.game_figures.kobold import Kobold
 from game_elements.items.exit import Exit
+from game_elements.obstracles.up_down_border import UpDownBorder
+from game_elements.obstracles.left_right_border import LeftRightBorder
 from utils.json_parser import JsonParser
 
-config = JsonParser.parse_constatns()
+const = JsonParser.parse_constatns()
+config = JsonParser.parse_configuration()
 
 
 class Table(object):
-    DWARF_IMG = pygame.transform.scale(pygame.image.load('sorce/zwerg.jpg'),
-                                  (config['dwarf_size']['width'], config['dwarf_size']['height']))
-    KOBOLD_IMG = pygame.transform.scale(pygame.image.load('sorce/kobold.jpg'),
-                                  (config['kobold_size']['width'], config['kobold_size']['height']))
-    GOLD_IMG = pygame.transform.scale(pygame.image.load('sorce/gold.jpg'),
-                                  (config['gold_size']['width'], config['gold_size']['height']))
-    EXIT = pygame.transform.scale(pygame.image.load('sorce/exit.jpg'),
-                                  (config['exit_size']['width'], config['exit_size']['height']))
-    FLOOR = pygame.transform.scale(pygame.image.load('sorce/floortexture.jpg'), (600, 600))
-    UP_DOWN_BORDER = pygame.transform.scale(pygame.image.load('sorce/border_stone.jpg'), (600, 30))
-    LEFT_RIGHT_BORDER = pygame.transform.scale(pygame.image.load('sorce/border_stone.jpg'), (30, 600))
+    FLOOR = pygame.transform.scale(pygame.image.load('sorce/floortexture.jpg'),
+                                   (config['screen_size'], config['screen_size']))
 
     def __init__(self, width, height, screen):
         self._width = width
@@ -35,10 +29,10 @@ class Table(object):
 
         :return: None
         """
-        self.up_border = pygame.Rect(0, 0, self._width, 30)
-        self.down_border = pygame.Rect(0, self._height-30, self._width, 30)
-        self.left_border = pygame.Rect(0, 0, 30, self._height)
-        self.right_border = pygame.Rect(self._width-30, 0, 30, self._height)
+        self.up_border = UpDownBorder(self._width, 30, 0, 0, (255, 255, 255))
+        self.down_border = UpDownBorder(self._width, 30, 0, self._height-30, (255, 255, 255))
+        self.left_border = LeftRightBorder(30, self._height, 0, 0, (255, 255, 255))
+        self.right_border = LeftRightBorder(30, self._height, self._width-30, 0, (255, 255, 255))
 
     def up_border_collision(self):
         """
@@ -47,7 +41,7 @@ class Table(object):
         :return:
         boolean: collision to upper border
         """
-        return self.__dwarf.get_rect().colliderect(self.up_border)
+        return self.__dwarf.get_dwarf_rect().colliderect(self.up_border.get_rectangle())
 
     def down_border_collision(self):
         """
@@ -55,7 +49,7 @@ class Table(object):
 
         :return: boolean: collision to down border
         """
-        return self.__dwarf.get_rect().colliderect(self.down_border)
+        return self.__dwarf.get_dwarf_rect().colliderect(self.down_border.get_rectangle())
 
     def right_border_collision(self):
         """
@@ -63,7 +57,7 @@ class Table(object):
 
         :return: boolean: dwarf collides right border
         """
-        return self.__dwarf.get_rect().colliderect(self.right_border)
+        return self.__dwarf.get_dwarf_rect().colliderect(self.right_border.get_rectangle())
 
     def left_border_collision(self):
         """
@@ -71,14 +65,14 @@ class Table(object):
 
         :return: boolean: dwarf collides left border
         """
-        return self.__dwarf.get_rect().colliderect(self.left_border)
+        return self.__dwarf.get_dwarf_rect().colliderect(self.left_border.get_rectangle())
 
     def draw_borders(self):
         """draw borders on the screen"""
-        self.screen.blit(self.LEFT_RIGHT_BORDER, (self._width-30, 0))
-        self.screen.blit(self.LEFT_RIGHT_BORDER, (0, 0))
-        self.screen.blit(self.UP_DOWN_BORDER, (0, 0))
-        self.screen.blit(self.UP_DOWN_BORDER, (0, self._height-30))
+        self.screen.blit(self.right_border.LEFT_RIGHT_BORDER, (self._width-30, 0))
+        self.screen.blit(self.left_border.LEFT_RIGHT_BORDER, (0, 0))
+        self.screen.blit(self.up_border.UP_DOWN_BORDER, (0, 0))
+        self.screen.blit(self.down_border.UP_DOWN_BORDER, (0, self._height-30))
 
     def get_size(self):
         """
@@ -98,11 +92,11 @@ class Table(object):
 
     def create_exit(self):
         """create exit object"""
-        self._exit = Exit(config['exit_size']['width'], config['exit_size']['height'], 280, 30, (40, 60, 237), self)
+        self._exit = Exit(const['exit_size']['width'], const['exit_size']['height'], 280, 30, (40, 60, 237))
 
     def draw_exit(self):
         """Draw the exit on the screen"""
-        self.screen.blit(self.EXIT, self._exit.get_xy())
+        self.screen.blit(self._exit.EXIT, self._exit.get_xy())
 
     def get_exit(self):
         """:return: object of exit"""
@@ -113,66 +107,79 @@ class Table(object):
         x = self._height // 2
         y = self._width // 2
         color = (227, 99, 25)
-        self.__dwarf = Dwarf(config['dwarf_size']['width'], config['dwarf_size']['height'], x, y, color, self, 5)
+        self.__dwarf = Dwarf(const['dwarf_size']['width'], const['dwarf_size']['height'], x, y, color, 5)
 
     def draw_dwarf(self):
         """draw the dwarf on the screen"""
-        self.screen.blit(self.DWARF_IMG, self.__dwarf.get_xy())
+        # pygame.draw.rect(self.screen, self.__dwarf.get_color(), self.__dwarf.get_dwarf_rect())
+        self.screen.blit(self.__dwarf.DWARF_IMG, self.__dwarf.get_xy())
 
     def get_dwarf(self):
+        """get dwarf object"""
         return self.__dwarf
 
     def create_gold(self, count):
+        """
+        create predefined count of gold items and record them in self.gold_mountains
+
+        :param count: predefined count of gold items to be created
+        :return: None
+        """
         color = (208, 242, 15)
         self.gold_counter = count
         self.gold_mountains = list()
         for i in range(count):
             x = random.randint(30, self._width-30)
             y = random.randint(30, self._height-30)
-            gold_i = Gold(config['gold_size']['width'], config['gold_size']['height'], x, y, color, self, 100)
-            self.gold_mountains.append((gold_i, gold_i.get_item_rect()))
+            gold_i = Gold(const['gold_size']['width'], const['gold_size']['height'], x, y, color, 100)
+            self.gold_mountains.append(gold_i)
 
     def get_gold_counter(self):
+        """get amount of created gold items"""
+
         return self.gold_counter
 
     def draw_gold(self, i):
-        # pygame.draw.rect(self.screen,
-        #                  self.gold_mountains[i][0].get_color(),
-        #                  self.gold_mountains[i][1]
-        #                  )
-        self.screen.blit(self.GOLD_IMG, self.gold_mountains[i][0].get_xy())
+        """draw gold item number i from self.gold_mountains"""
+        pygame.draw.rect(self.screen, self.gold_mountains[i].get_color(), self.gold_mountains[i].get_gold_rect())
+        self.screen.blit(self.gold_mountains[i].GOLD_IMG, self.gold_mountains[i].get_xy())
 
     def get_gold_items(self, i):
-        return self.gold_mountains[i][0]
-
-    def get_gold_items_rect(self, i):
-        return self.gold_mountains[i][1]
+        """get list of gold items"""
+        return self.gold_mountains[i]
 
     def create_kobolds(self, counter):
+        """
+        create predefined count of kobolds in self.kobolds
+
+        :param counter: amount of kobolds to be created
+        :return: None
+        """
         color = (39, 176, 26)
         self.kobold_counter = counter
         self.kobolds = list()
         for i in range(counter):
             x = random.randint(40, self._width - 40)
             y = random.randint(40, self._height - 40)
-            kobold_i = Kobold(config['kobold_size']['width'], config['kobold_size']['height'], x, y, color, self, 10)
-            self.kobolds.append([kobold_i, kobold_i.get_rect()])
+            kobold_i = Kobold(const['kobold_size']['width'], const['kobold_size']['height'], x, y, color, 10)
+            self.kobolds.append(kobold_i)
 
     def get_kobold_counter(self):
+        """get count of created kobolds"""
         return self.kobold_counter
 
     def draw_kobolds(self, i):
-        self.kobolds[i][1] = self.kobolds[i][0].get_rect()
-        #pygame.draw.rect(self.screen, self.kobolds[i][0].get_color(), self.kobolds[i][1])
-        self.screen.blit(self.KOBOLD_IMG, self.kobolds[i][0].get_xy())
+        """draw kobolds"""
+        self.screen.blit(self.kobolds[i].KOBOLD_IMG, self.kobolds[i].get_xy())
 
+    def get_kobold_by_index(self, i):
+        """
+        get kobold tuple of (kobold object, kobold rectangle)
 
-    #return list [Kobold, Rect]
-    def get_kobold(self, i):
+        :param i: number of kobold in self.kobolds
+        :return: tuple(kobold obj, rect)
+        """
         return self.kobolds[i]
-
-    def collision(self, obj1, obj2):
-        return obj1.colliderect(obj2)
 
     def text_objects(self, text, font):
         textSurface = font.render(text, True, (250, 0, 0))

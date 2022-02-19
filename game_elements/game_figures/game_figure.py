@@ -4,12 +4,15 @@ from game_elements.element import Element
 
 class GameFigure(Element):
 
-    def __init__(self, width, height, x, y, color, table, health):
-        super(GameFigure, self).__init__(width, height, x, y, color, table)
+    def __init__(self, width, height, x, y, color, health):
+        super(GameFigure, self).__init__(width, height, x, y, color)
         self.__health = health
         self.__item = None
         self.__is_alive = True
         self.__is_visible = True
+
+    def get_game_figure_rect(self):
+        return self.get_rectangle()
 
     def get_hp(self):
         return self.__health
@@ -40,10 +43,5 @@ class GameFigure(Element):
     def decrease_y(self):
         self._y -= 1
 
-    def catch_item(self, element, elem_rect):
-        if (element.is_visible() and self.check_collision(elem_rect)):
-            element.make_invisible()
-            print("collected")
-
-    def check_collision(self, rect):
-        return self.fig_rect.colliderect(rect)
+    def check_collision(self, another_rect):
+        return self.get_game_figure_rect().colliderect(another_rect)
